@@ -29,7 +29,7 @@ export default class Start extends React.Component {
       >
         <View style={styles.container}>
           <View style={styles.title}>
-            <Text style={styles.titleText}>App Title</Text>
+            <Text style={styles.titleText}>ChatApp</Text>
           </View>
           <View style={styles.loginView}>
             <TextInput
