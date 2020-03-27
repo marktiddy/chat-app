@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import KeyboardSpacer from "react-native-keyboard-spacer";
 
 import Start from "./components/Start";
 import Chat from "./components/Chat";

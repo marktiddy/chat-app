@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View, TextInput } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { Platform } from "react-native";
+import KeyboardSpacer from "react-native-keyboard-spacer";
 
 export default class Chat extends React.Component {
   //Start our chat in the state
@@ -13,12 +15,19 @@ export default class Chat extends React.Component {
   componentDidMount() {
     this.setState({
       messages: [
+        //some initial messages including a system message
         {
           _id: 1,
-          text: "Hello Developer",
+          text: `${this.props.navigation.state.params.name} has entered the chat`,
+          createdAt: new Date(),
+          system: true
+        },
+        {
+          _id: 2,
+          text: `Hello ${this.props.navigation.state.params.name}`,
           createdAt: new Date(),
           user: {
-            _id: 2,
+            _id: 3,
             name: "React Native",
             avatar: "https://placeimg.com/140/140/any"
           }
@@ -36,15 +45,38 @@ export default class Chat extends React.Component {
     }));
   }
 
-  render() {
+  //Function to render our bubble differently
+  renderBubble(props) {
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        user={{
-          _id: 1
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: "#000"
+          }
         }}
       />
+    );
+  }
+
+  render() {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: `${this.props.navigation.state.params.bgColor}`
+        }}
+      >
+        <GiftedChat
+          renderBubble={this.renderBubble.bind(this)}
+          messages={this.state.messages}
+          onSend={messages => this.onSend(messages)}
+          user={{
+            _id: 1
+          }}
+        />
+        {Platform.OS === "android" ? <KeyboardSpacer /> : null}
+      </View>
     );
   }
 
@@ -57,6 +89,10 @@ export default class Chat extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "blue"
+  },
   mainText: {
     color: "white",
     fontSize: 20

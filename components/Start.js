@@ -9,6 +9,7 @@ import {
   TouchableOpacity
 } from "react-native";
 import { withOrientation } from "react-navigation";
+import KeyboardSpacer from "react-native-keyboard-spacer";
 
 export default class Start extends React.Component {
   constructor(props) {
@@ -119,6 +120,8 @@ export default class Start extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
+        {/*adding the spacer for moving the screen when user types their name*/}
+        <KeyboardSpacer />
       </ImageBackground>
     );
   }
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
     padding: 10
   },
   loginView: {
-    flex: 44,
+    height: 300,
     backgroundColor: "white",
     alignContent: "center",
     justifyContent: "center",
