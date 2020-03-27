@@ -108,6 +108,9 @@ export default class Start extends React.Component {
               // button takes us to the next screen on click and passes in the name as a prop
             }
             <TouchableOpacity
+              accessible={true}
+              accessibilityLabel="Start Chatting"
+              accessibilityHint="Press this to start the chat"
               onPress={() =>
                 this.props.navigation.navigate("Chat", {
                   name: this.state.name,
