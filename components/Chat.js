@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
 });
 
 Chat["navigationOptions"] = screenProps => ({
-  title: screenProps.navigation.state.params.name
+  title: screenProps.navigation.state.params.name + " is chatting"
 });
 
 export default Chat;

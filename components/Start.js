@@ -128,6 +128,12 @@ export default class Start extends React.Component {
       </ImageBackground>
     );
   }
+
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: "ChatApp"
+    };
+  };
 }
 
 const styles = StyleSheet.create({

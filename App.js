@@ -12,7 +12,7 @@ import { createStackNavigator } from "react-navigation-stack";
 //Create a navigator
 const navigator = createStackNavigator(
   {
-    Main: { screen: Start },
+    Main: { screen: Start, title: "Chat App" },
     Chat: { screen: Chat, title: "Chat" }
   },
   {
