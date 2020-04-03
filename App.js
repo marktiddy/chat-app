@@ -10,10 +10,15 @@ import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 //Create a navigator
-const navigator = createStackNavigator({
-  Main: { screen: Start },
-  Chat: { screen: Chat }
-});
+const navigator = createStackNavigator(
+  {
+    Main: { screen: Start },
+    Chat: { screen: Chat, title: "Chat" }
+  },
+  {
+    initialRoute: "Main"
+  }
+);
 
 //Now link it all together
 const navigatorContainer = createAppContainer(navigator);
