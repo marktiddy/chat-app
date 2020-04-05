@@ -64,7 +64,7 @@ const Chat = ({ navigation }) => {
     setMessages(GiftedChat.append(currentMessages, newMessage));
     referenceAllMessages.add({
       _id: m._id,
-      createdAt: moment(new Date()).format("YYYY-MM-DD"),
+      createdAt: moment().format("YYYY-MM-DDTHH:mm:ss"),
       text: m.text,
       user: {
         _id: m.user._id,
@@ -122,7 +122,7 @@ const Chat = ({ navigation }) => {
     >
       <GiftedChat
         renderBubble={renderBubble}
-        messages={messages}
+        messages={messages.reverse()}
         onSend={newMessage => onSend(newMessage)}
         user={{
           _id: currentUser._id
