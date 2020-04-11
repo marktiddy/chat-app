@@ -180,7 +180,7 @@ const Chat = ({ navigation }) => {
       <GiftedChat
         renderBubble={renderBubble}
         renderInputToolbar={renderInputToolbar}
-        messages={messages.reverse()}
+        messages={messages}
         onSend={(newMessage) => onSend(newMessage)}
         user={{
           _id: currentUser._id,
