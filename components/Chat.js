@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput } from "react-native";
-import { GiftedChat, Bubble } from "react-native-gifted-chat";
+import { StyleSheet, Text, View, TextInput, AsyncStorage } from "react-native";
+import { GiftedChat, Bubble, InputToolbar } from "react-native-gifted-chat";
 import { Platform } from "react-native";
 import KeyboardSpacer from "react-native-keyboard-spacer";
 const firebase = require("firebase");
@@ -8,6 +8,7 @@ require("firebase/firestore");
 global.crypto = require("@firebase/firestore");
 import { API_KEY } from "../keys";
 import { decode, encode } from "base-64";
+import NetInfo from "@react-native-community/netinfo";
 //Import moment
 import moment from "moment";
 
@@ -15,9 +16,10 @@ const Chat = ({ navigation }) => {
   //Set our state
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
+  const [isConnected, setIsConnected] = useState(false);
 
   //set up firebase
-  global.crypto.getRandomValues = byteArray => {
+  global.crypto.getRandomValues = (byteArray) => {
     for (let i = 0; i < byteArray.length; i++) {
       byteArray[i] = Math.floor(256 * Math.random());
     }
@@ -39,7 +41,7 @@ const Chat = ({ navigation }) => {
       projectId: "chat-app-969e4",
       storageBucket: "chat-app-969e4.appspot.com",
       messagingSenderId: "188998855349",
-      appId: "1:188998855349:web:016b9740d4b27b41b46cfc"
+      appId: "1:188998855349:web:016b9740d4b27b41b46cfc",
     });
   }
 
@@ -47,9 +49,9 @@ const Chat = ({ navigation }) => {
   const referenceAllMessages = firebase.firestore().collection("message");
 
   //Helper function to process our messages
-  const onMessagesUpdate = snapshot => {
+  const onMessagesUpdate = (snapshot) => {
     const newMessages = [];
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       var data = doc.data();
       newMessages.push(data);
     });
@@ -68,64 +70,120 @@ const Chat = ({ navigation }) => {
       text: m.text,
       user: {
         _id: m.user._id,
-        avatar: currentUser.avatar
-      }
+        avatar: currentUser.avatar,
+      },
     });
+    saveLocalMessages();
+  };
+
+  //Function to save messages to local storage
+  const saveLocalMessages = async () => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messages));
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  //function to delete messages (if we ever want it)
+
+  const deleteLocalMessages = async () => {
+    try {
+      await AsyncStorage.removeItem("messages");
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  //Helper function to get messages from local storage
+  const getLocalMessages = async () => {
+    let localMessages = "";
+    try {
+      localMessages = (await AsyncStorage.getItem("messages")) || [];
+      setMessages(JSON.parse(localMessages));
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
   //Stuff to do when our app loads
   useEffect(() => {
-    //check if user has been signed in
-    const authUnsubscribe = firebase.auth().onAuthStateChanged(async user => {
-      if (!user) {
-        await firebase.auth().signInAnonymously();
-      }
-      //Update user state
-      setCurrentUser({
-        _id: user.uid,
-        avatar: "https://placeimg.com/140/140/any"
+    //Check if a user is connected and set the state appropriately
+    NetInfo.fetch().then((state) => {
+      setIsConnected(state.isConnected);
+    });
+
+    const //check if user has been signed in
+      authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        if (!user) {
+          await firebase.auth().signInAnonymously();
+        }
+        //Update user state
+        setCurrentUser({
+          _id: user.uid,
+          avatar: "https://placeimg.com/140/140/any",
+        });
       });
-    });
-    //Firebase snapshots
-    const unsubscribe = referenceAllMessages.onSnapshot(snap => {
-      onMessagesUpdate(snap);
-    });
-    //initial message code
+
+    //Now do stuff depending on user connectivity status
+    var unsubscribe;
+    if (isConnected) {
+      //Firebase snapshots
+      unsubscribe = referenceAllMessages.onSnapshot((snap) => {
+        onMessagesUpdate(snap);
+      });
+    } else {
+      //Get our local messages
+      getLocalMessages();
+    }
+
+    //First, lets load messages from localStorage
 
     //Unsubscribe at the end
     return () => {
       authUnsubscribe();
-      unsubscribe();
+      if (isConnected) {
+        unsubscribe();
+      }
     };
   }, []);
 
   //Function to render our bubble differently
-  const renderBubble = props => {
+  const renderBubble = (props) => {
     return (
       <Bubble
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "#333"
-          }
+            backgroundColor: "#333",
+          },
         }}
       />
     );
+  };
+
+  //Function to not render the input
+  const renderInputToolbar = (props) => {
+    if (isConnected == false) {
+    } else {
+      return <InputToolbar {...props} />;
+    }
   };
 
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: `${navigation.state.params.bgColor}`
+        backgroundColor: `${navigation.state.params.bgColor}`,
       }}
     >
       <GiftedChat
         renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
         messages={messages.reverse()}
-        onSend={newMessage => onSend(newMessage)}
+        onSend={(newMessage) => onSend(newMessage)}
         user={{
-          _id: currentUser._id
+          _id: currentUser._id,
         }}
       />
       {Platform.OS === "android" ? <KeyboardSpacer /> : null}
@@ -136,16 +194,16 @@ const Chat = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "blue"
+    backgroundColor: "blue",
   },
   mainText: {
     color: "white",
-    fontSize: 20
-  }
+    fontSize: 20,
+  },
 });
 
-Chat["navigationOptions"] = screenProps => ({
-  title: screenProps.navigation.state.params.name + " is chatting"
+Chat["navigationOptions"] = (screenProps) => ({
+  title: screenProps.navigation.state.params.name + " is chatting",
 });
 
 export default Chat;
