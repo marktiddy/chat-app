@@ -9,6 +9,7 @@ global.crypto = require("@firebase/firestore");
 import { API_KEY } from "../keys";
 import { decode, encode } from "base-64";
 import NetInfo from "@react-native-community/netinfo";
+import CustomActions from "./CustomActions";
 //Import moment
 import moment from "moment";
 
@@ -162,6 +163,10 @@ const Chat = ({ navigation }) => {
     );
   };
 
+  const renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
   //Function to not render the input
   const renderInputToolbar = (props) => {
     if (isConnected == false) {
@@ -179,6 +184,7 @@ const Chat = ({ navigation }) => {
     >
       <GiftedChat
         renderBubble={renderBubble}
+        renderActions={renderCustomActions}
         renderInputToolbar={renderInputToolbar}
         messages={messages}
         onSend={(newMessage) => onSend(newMessage)}
