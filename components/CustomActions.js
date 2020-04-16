@@ -1,8 +1,71 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as Location from "expo-location";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
 
 export default class CustomActions extends React.Component {
+  //Get location
+  async getLocation() {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === "granted") {
+      let result = await Location.getCurrentPositionAsync({}).catch((e) =>
+        console.log(e)
+      );
+
+      if (result) {
+        this.props.onSend({
+          createdAt: "",
+          user: this.props.user,
+          location: {
+            latitude: result.coords.latitude,
+            longitude: result.coords.longitude,
+          },
+        });
+      }
+    }
+  }
+
+  async takePicture() {
+    const { status } = await Permissions.askAsync(
+      Permissions.CAMERA
+    ).catch((e) => console.log(e));
+    if (status === "granted") {
+      let result = await ImagePicker.launchCameraAsync({
+        mediaTypes: "Images",
+      }).catch((e) => console.log(e));
+
+      if (!result.cancelled) {
+        this.props.onSend({
+          createdAt: "",
+          user: this.props.user,
+          image: "https://reactnative.dev/img/header_logo.png",
+        });
+        console.log(result);
+      }
+    }
+  }
+  async choosePicture() {
+    const { status } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    ).catch((e) => console.log(e));
+    if (status === "granted") {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "Images",
+      }).catch((e) => console.log(e));
+
+      if (!result.cancelled) {
+        this.props.onSend({
+          createdAt: "",
+          user: this.props.user,
+          image: "https://reactnative.dev/img/header_logo.png",
+        });
+        console.log(result);
+      }
+    }
+  }
+
   onActionsPress = () => {
     const options = [
       "Choose From Library",
@@ -19,13 +82,14 @@ export default class CustomActions extends React.Component {
       async (buttonIndex) => {
         switch (buttonIndex) {
           case 0:
-            console.log("user wants to pick an image");
+            this.choosePicture();
             return;
           case 1:
-            console.log("user wants to take a photo");
+            this.takePicture();
             return;
           case 2:
-            console.log("user wants to get his location");
+            this.getLocation();
+            return;
           default:
         }
       }

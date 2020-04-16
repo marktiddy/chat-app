@@ -10,6 +10,7 @@ import { API_KEY } from "../keys";
 import { decode, encode } from "base-64";
 import NetInfo from "@react-native-community/netinfo";
 import CustomActions from "./CustomActions";
+import MapView from "react-native-maps";
 //Import moment
 import moment from "moment";
 
@@ -63,17 +64,11 @@ const Chat = ({ navigation }) => {
   //TODO - Update for firebase
   const onSend = (newMessage = []) => {
     const currentMessages = messages;
+    console.log(newMessage[0]);
     const m = newMessage[0];
+    m.createdAt = moment().format("YYYY-MM-DDTHH:mm:ss");
     setMessages(GiftedChat.append(currentMessages, newMessage));
-    referenceAllMessages.add({
-      _id: m._id,
-      createdAt: moment().format("YYYY-MM-DDTHH:mm:ss"),
-      text: m.text,
-      user: {
-        _id: m.user._id,
-        avatar: currentUser.avatar,
-      },
-    });
+    referenceAllMessages.add(m);
     saveLocalMessages();
   };
 
@@ -175,6 +170,25 @@ const Chat = ({ navigation }) => {
     }
   };
 
+  //Check if we have a map to render
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={styles.mapViewStyle}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.latitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <View
       style={{
@@ -186,6 +200,7 @@ const Chat = ({ navigation }) => {
         renderBubble={renderBubble}
         renderActions={renderCustomActions}
         renderInputToolbar={renderInputToolbar}
+        renderCustomView={renderCustomView}
         messages={messages}
         onSend={(newMessage) => onSend(newMessage)}
         user={{
@@ -205,6 +220,12 @@ const styles = StyleSheet.create({
   mainText: {
     color: "white",
     fontSize: 20,
+  },
+  mapViewStyle: {
+    width: 150,
+    height: 100,
+    margin: 3,
+    borderRadius: 13,
   },
 });
 
