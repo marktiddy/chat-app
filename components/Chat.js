@@ -49,6 +49,8 @@ const Chat = ({ navigation }) => {
 
   //create a reference to our messages
   const referenceAllMessages = firebase.firestore().collection("message");
+  //Reference for our storage
+  const storageRef = firebase.storage().ref();
 
   //Helper function to process our messages
   const onMessagesUpdate = (snapshot) => {
@@ -64,7 +66,7 @@ const Chat = ({ navigation }) => {
   //TODO - Update for firebase
   const onSend = (newMessage = []) => {
     const currentMessages = messages;
-    console.log(newMessage[0]);
+
     const m = newMessage[0];
     m.createdAt = moment().format("YYYY-MM-DDTHH:mm:ss");
     setMessages(GiftedChat.append(currentMessages, newMessage));
@@ -105,6 +107,7 @@ const Chat = ({ navigation }) => {
   //Stuff to do when our app loads
   useEffect(() => {
     //Check if a user is connected and set the state appropriately
+
     NetInfo.fetch().then((state) => {
       setIsConnected(state.isConnected);
     });

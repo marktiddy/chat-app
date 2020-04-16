@@ -4,8 +4,23 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+const firebase = require("firebase");
+require("firebase/firestore");
 
 export default class CustomActions extends React.Component {
+  genRand = () => {
+    return 1 + Math.floor(6000000 * Math.random());
+  };
+
+  //Upload function
+  uploadImageFetch = async (uri) => {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const ref = firebase.storage().ref().child(`${this.genRand()}`);
+    const snapshot = await ref.put(blob);
+    return await snapshot.ref.getDownloadURL();
+  };
+
   //Get location
   async getLocation() {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -40,9 +55,8 @@ export default class CustomActions extends React.Component {
         this.props.onSend({
           createdAt: "",
           user: this.props.user,
-          image: "https://reactnative.dev/img/header_logo.png",
+          image: await this.uploadImageFetch(result.uri),
         });
-        console.log(result);
       }
     }
   }
@@ -59,9 +73,8 @@ export default class CustomActions extends React.Component {
         this.props.onSend({
           createdAt: "",
           user: this.props.user,
-          image: "https://reactnative.dev/img/header_logo.png",
+          image: await this.uploadImageFetch(result.uri),
         });
-        console.log(result);
       }
     }
   }
@@ -101,6 +114,10 @@ export default class CustomActions extends React.Component {
       <TouchableOpacity
         style={[styles.container]}
         onPress={this.onActionsPress}
+        accesibble={true}
+        accesibilityLabel="More options"
+        accessibilityHint="Take a photo,share an image or location"
+        accessibilityRole="button"
       >
         <View style={[styles.wrapper, this.props.wrapperStyle]}>
           <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
