@@ -18,7 +18,7 @@ const Chat = ({ navigation }) => {
   //Set our state
   const [messages, setMessages] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true);
 
   //set up firebase
   global.crypto.getRandomValues = (byteArray) => {
@@ -56,7 +56,7 @@ const Chat = ({ navigation }) => {
   const onMessagesUpdate = (snapshot) => {
     const newMessages = [];
     snapshot.forEach((doc) => {
-      var data = doc.data();
+      const data = doc.data();
       newMessages.push(data);
     });
     setMessages(newMessages);
@@ -79,7 +79,7 @@ const Chat = ({ navigation }) => {
     try {
       await AsyncStorage.setItem("messages", JSON.stringify(messages));
     } catch (e) {
-      console.log(e.message);
+      console.log("Problem saving messages" + e.message);
     }
   };
 
@@ -97,10 +97,16 @@ const Chat = ({ navigation }) => {
   const getLocalMessages = async () => {
     let localMessages = "";
     try {
-      localMessages = (await AsyncStorage.getItem("messages")) || [];
-      setMessages(JSON.parse(localMessages));
+      await AsyncStorage.getItem("messages").then((res) => {
+        if (res !== null) {
+          localMessages = res;
+          setMessages(JSON.parse(res));
+        } else {
+          //nothing
+        }
+      });
     } catch (e) {
-      console.log(e.message);
+      console.log("Problem retreiving message " + e.message);
     }
   };
 
@@ -115,7 +121,11 @@ const Chat = ({ navigation }) => {
     const //check if user has been signed in
       authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
         if (!user) {
-          await firebase.auth().signInAnonymously();
+          try {
+            await firebase.auth().signInAnonymously();
+          } catch (error) {
+            console.log(error);
+          }
         }
         //Update user state
         setCurrentUser({
@@ -125,7 +135,7 @@ const Chat = ({ navigation }) => {
       });
 
     //Now do stuff depending on user connectivity status
-    var unsubscribe;
+    let unsubscribe;
     if (isConnected) {
       //Firebase snapshots
       unsubscribe = referenceAllMessages.onSnapshot((snap) => {
