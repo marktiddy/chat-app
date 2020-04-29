@@ -1,4 +1,32 @@
-import React from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Start.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Start.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -22,17 +50,17 @@ export default class Start extends React.Component {
 
   render() {
     return (
-      <ImageBackground
+      &lt;ImageBackground
         source={require('../assets/bg-image.png')}
         style={{ width: '100%', height: '100%' }}
         resizeMode="cover"
       >
-        <View style={styles.container}>
-          <View style={styles.title}>
-            <Text style={styles.titleText}>ChatApp</Text>
-          </View>
-          <View style={styles.loginView}>
-            <TextInput
+        &lt;View style={styles.container}>
+          &lt;View style={styles.title}>
+            &lt;Text style={styles.titleText}>ChatApp&lt;/Text>
+          &lt;/View>
+          &lt;View style={styles.loginView}>
+            &lt;TextInput
               style={{
                 height: 40,
                 borderColor: 'gray',
@@ -43,10 +71,10 @@ export default class Start extends React.Component {
               value={this.state.name}
               placeholder="Enter Your Name"
             />
-            <Text style={styles.bgChooseTitle}>Choose Background Color:</Text>
+            &lt;Text style={styles.bgChooseTitle}>Choose Background Color:&lt;/Text>
 
-            <View style={styles.colorOptions}>
-              <TouchableOpacity
+            &lt;View style={styles.colorOptions}>
+              &lt;TouchableOpacity
                 style={
                   this.state.bgColor === '#090C08'
                     ? [
@@ -60,7 +88,7 @@ export default class Start extends React.Component {
                   this.setState({ bgColor: '#090C08' });
                 }}
               />
-              <TouchableOpacity
+              &lt;TouchableOpacity
                 style={
                   this.state.bgColor === '#737083'
                     ? [
@@ -74,7 +102,7 @@ export default class Start extends React.Component {
                   this.setState({ bgColor: '#737083' });
                 }}
               />
-              <TouchableOpacity
+              &lt;TouchableOpacity
                 style={
                   this.state.bgColor === '#8A95A5'
                     ? [
@@ -88,7 +116,7 @@ export default class Start extends React.Component {
                   this.setState({ bgColor: '#8A95A5' });
                 }}
               />
-              <TouchableOpacity
+              &lt;TouchableOpacity
                 style={
                   this.state.bgColor === '#B9C6AE'
                     ? [
@@ -102,13 +130,13 @@ export default class Start extends React.Component {
                   this.setState({ bgColor: '#B9C6AE' });
                 }}
               />
-            </View>
+            &lt;/View>
             {
               /**
                * This button takes the user to the chat screen and passes their name and background color as props
                */
             }
-            <TouchableOpacity
+            &lt;TouchableOpacity
               accessible
               accessibilityLabel="Start Chatting"
               accessibilityHint="Press this to start the chat"
@@ -118,13 +146,13 @@ export default class Start extends React.Component {
               })}
               style={styles.button}
             >
-              <Text style={styles.buttonText}>Start Chatting</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+              &lt;Text style={styles.buttonText}>Start Chatting&lt;/Text>
+            &lt;/TouchableOpacity>
+          &lt;/View>
+        &lt;/View>
         {/* adding the spacer for moving the screen when user types their name */}
-        <KeyboardSpacer />
-      </ImageBackground>
+        &lt;KeyboardSpacer />
+      &lt;/ImageBackground>
     );
   }
 
@@ -213,3 +241,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#choosePicture">choosePicture</a></li><li><a href="global.html#getLocation">getLocation</a></li><li><a href="global.html#takePicture">takePicture</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Apr 29 2020 17:56:48 GMT+0100 (British Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
